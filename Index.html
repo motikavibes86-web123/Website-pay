@@ -689,48 +689,7 @@
 // ── State ──────────────────────────────────────────────
 let selectedNetwork = '';
 
-// ── URL / Django params ────────────────────────────────
-// Parse query params so Django can prefill amount, plan, etc.
-// Usage: ?amount=25000&plan=Business+Starter&period=1+Year
-function getParam(key, fallback) {
-  const p = new URLSearchParams(window.location.search);
-  return p.get(key) || fallback;
-}
-
-(function init() {
-  const amount  = parseInt(getParam('amount', '25000'));
-  const plan    = getParam('plan',   'Business Starter');
-  const period  = getParam('period', '1 Year');
-  const orderRef = getParam('ref',   '');
-
-  document.getElementById('displayAmount').textContent =
-    'TZS ' + amount.toLocaleString();
-
-  const desc = document.querySelector('.amount-desc');
-  if (desc) {
-    desc.querySelector('span').textContent = plan;
-    desc.lastChild.textContent = ' ' + plan + ' · ' + period;
-  }
-
-  // Store for submission
-  window._payData = { amount, plan, period, orderRef };
-})();
-
-// ── Network selection ──────────────────────────────────
-function selectNetwork(id) {
-  selectedNetwork = id;
-  ['mpesa','mixx','airtel','halopesa'].forEach(n => {
-    document.getElementById('card-' + n).classList.toggle('active', n === id);
-  });
-  document.getElementById('networkSelect').value = id;
-  document.getElementById('formError').style.display = 'none';
-}
-
-function syncNetworkCards(val) {
-  selectNetwork(val);
-}
-
-// ── Validation ─────────────────────────────────────────
+// ── // ── Validation ─────────────────────────────────────────
 function showError(msg) {
   const el = document.getElementById('formError');
   el.textContent = msg;
@@ -781,11 +740,10 @@ async function initiatePay() {
     order_ref:  window._payData.orderRef,
   };
 
-  // ── POST to Django ──
-  // Uncomment and adjust the URL when connecting to backend:
-  /*
   try {
-    const resp = await fetch('/api/payments/initiate/', {
+    const resp = await fetch(
+      https://backgrounds-tuition-sensitive-basic.trycloudflare.com/api/payments/initiate/',
+      {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -807,11 +765,6 @@ async function initiatePay() {
   }
   */
 
-  // ── DEMO simulation (remove when backend is live) ──
-  await delay(1200);
-  showStatusPanel();
-  runDemo();
-}
 
 function showStatusPanel() {
   document.getElementById('formCard').style.display = 'none';
@@ -825,45 +778,6 @@ function showStatusPanel() {
   document.getElementById('resultFailed').classList.remove('visible');
 }
 
-// ── Demo simulation ────────────────────────────────────
-async function runDemo() {
-  // Step 1: Waiting
-  setStep('waiting', 'active');
-  setStepIcon('waiting', '<span class="pulse-dot"></span>');
-
-  await delay(2500);
-
-  // Step 2: Processing
-  setStep('waiting', 'done');
-  setStepIcon('waiting',
-    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>');
-  setStep('processing', 'active');
-  setStepIcon('processing', '<span class="spinner"></span>');
-
-  await delay(2800);
-
-  // Randomly succeed 80% of time for demo
-  if (Math.random() < 0.8) {
-    simulateSuccess();
-  } else {
-    simulateFail('Payment was declined by the network. Please try a different method.');
-  }
-}
-
-function simulateSuccess() {
-  setStep('processing', 'done');
-  setStepIcon('processing',
-    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>');
-  setStep('success', 'done');
-  setStepIcon('success',
-    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>');
-
-  document.getElementById('statusMsg').style.display = 'none';
-  document.getElementById('stepper').style.marginBottom = '20px';
-  document.getElementById('resultSuccess').classList.add('visible');
-}
-
-function simulateFail(reason) {
   setStep('processing', 'failed');
   document.getElementById('step-failed').style.display = 'flex';
   setStep('failed', 'failed');
