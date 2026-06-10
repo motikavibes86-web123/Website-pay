@@ -809,10 +809,12 @@ async function initiatePay() {
 
   // ── DEMO simulation (remove when backend is live) ──
   await delay(1200);
-  showStatusPanel();
-  runDemo();
-}
+showStatusPanel();
 
+setStep('waiting', 'active');
+setStepIcon('waiting', '<span class="pulse-dot"></span>');
+}
+  
 function showStatusPanel() {
   document.getElementById('formCard').style.display = 'none';
   const panel = document.getElementById('statusPanel');
