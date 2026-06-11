@@ -1,857 +1,1656 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sw">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SELVIX HOST — Complete Your Payment</title>
-<style>
-  /* ── Reset & Base ── */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selvix Tech - Platform ya Teknolohia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* ══════════════════════════════════════════════════════════════ */
+        /* SELVIX TECH - COMPLETE STYLING */
+        /* ══════════════════════════════════════════════════════════════ */
 
-  :root {
-    --bg:          #080d18;
-    --surface:     #0d1525;
-    --surface2:    #111d35;
-    --border:      #1a2e50;
-    --border-glow: #1e4080;
-    --cyan:        #00d4ff;
-    --cyan-dim:    #0099cc;
-    --blue:        #1a6fff;
-    --blue-bright: #3d8bff;
-    --text:        #e2eaf6;
-    --text-muted:  #6b82a8;
-    --success:     #00e87a;
-    --error:       #ff4d6a;
-    --warning:     #ffb020;
-    --radius:      14px;
-    --radius-sm:   8px;
-    --font:        'Segoe UI', system-ui, -apple-system, sans-serif;
-  }
+        :root {
+            --primary-blue: #1a6fff;
+            --primary-blue-bright: #3d8bff;
+            --accent-cyan: #00d4ff;
+            --accent-cyan-dim: #0099cc;
+            --bg-dark: #080d18;
+            --bg-surface: #0d1525;
+            --bg-surface2: #111d35;
+            --border-color: #1a2e50;
+            --border-glow: #1e4080;
+            --text-primary: #e2eaf6;
+            --text-muted: #6b82a8;
+            --text-light: #a8bcd1;
+            --success-color: #00e87a;
+            --error-color: #ff4d6a;
+            --warning-color: #ffb020;
+            --radius: 14px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+        }
 
-  html { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  body {
-    min-height: 100vh;
-    background:
-      radial-gradient(ellipse 80% 40% at 20% 0%, rgba(0,100,255,0.12) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(0,212,255,0.08) 0%, transparent 60%),
-      var(--bg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 24px 16px 48px;
-  }
+        html {
+            scroll-behavior: smooth;
+            font-family: 'Segoe UI', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+        }
 
-  /* ── Header bar ── */
-  .topbar {
-    width: 100%;
-    max-width: 520px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 28px;
-  }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .brand-icon {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, var(--blue), var(--cyan));
-    border-radius: 9px;
-    display: grid;
-    place-items: center;
-    font-size: 18px;
-    font-weight: 900;
-    color: #fff;
-    letter-spacing: -1px;
-  }
-  .brand-name {
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    background: linear-gradient(90deg, var(--blue-bright), var(--cyan));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .secure-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: var(--text-muted);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 5px 12px;
-  }
-  .secure-badge svg { flex-shrink: 0; }
+        body {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #0a1220 50%, var(--bg-dark) 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
 
-  /* ── Amount card ── */
-  .amount-card {
-    width: 100%;
-    max-width: 520px;
-    background: linear-gradient(135deg, #0e1f3e 0%, #0a1828 100%);
-    border: 1px solid var(--border-glow);
-    border-radius: var(--radius);
-    padding: 28px 28px 24px;
-    margin-bottom: 16px;
-    position: relative;
-    overflow: hidden;
-  }
-  .amount-card::before {
-    content: '';
-    position: absolute;
-    top: -40px; right: -40px;
-    width: 160px; height: 160px;
-    background: radial-gradient(circle, rgba(0,212,255,0.12), transparent 70%);
-    pointer-events: none;
-  }
-  .amount-label {
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-  }
-  .amount-value {
-    font-size: 42px;
-    font-weight: 800;
-    line-height: 1;
-    background: linear-gradient(90deg, #fff 0%, var(--cyan) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: -1px;
-  }
-  .amount-desc {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .amount-desc span {
-    background: rgba(0,212,255,0.1);
-    border: 1px solid rgba(0,212,255,0.25);
-    color: var(--cyan);
-    border-radius: 20px;
-    padding: 2px 10px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
+        body::before {
+            content: '';
+            position: fixed;
+            top: -40%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(26, 111, 255, 0.15), transparent 70%);
+            border-radius: 50%;
+            animation: float 15s ease-in-out infinite;
+            z-index: -1;
+        }
 
-  /* ── Main card ── */
-  .card {
-    width: 100%;
-    max-width: 520px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 28px;
-    margin-bottom: 16px;
-  }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -30%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.12), transparent 70%);
+            border-radius: 50%;
+            animation: float 18s ease-in-out infinite reverse;
+            z-index: -1;
+        }
 
-  .card-title {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 22px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .card-title svg { color: var(--cyan); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-50px) translateX(30px); }
+        }
 
-  /* ── Form fields ── */
-  .field { margin-bottom: 18px; }
-  label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 7px;
-  }
-  input, select {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text);
-    font-size: 15px;
-    font-family: var(--font);
-    padding: 13px 16px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    appearance: none;
-    -webkit-appearance: none;
-  }
-  input:focus, select:focus {
-    border-color: var(--cyan-dim);
-    box-shadow: 0 0 0 3px rgba(0,212,255,0.12);
-  }
-  input::placeholder { color: #3a4f6e; }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-  /* select arrow */
-  .select-wrap { position: relative; }
-  .select-wrap::after {
-    content: '';
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0; height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 6px solid var(--text-muted);
-    pointer-events: none;
-  }
+        /* ── NAVBAR ── */
+        .navbar {
+            background: rgba(13, 21, 37, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: slideDown 0.5s ease;
+        }
 
-  /* ── Network grid ── */
-  .networks-title {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 12px;
-  }
-  .network-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .net-card {
-    background: var(--surface2);
-    border: 2px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px 10px;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s, transform 0.15s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    user-select: none;
-  }
-  .net-card:hover {
-    border-color: var(--border-glow);
-    background: #131f38;
-    transform: translateY(-1px);
-  }
-  .net-card.active {
-    border-color: var(--cyan);
-    background: rgba(0,212,255,0.06);
-    box-shadow: 0 0 16px rgba(0,212,255,0.15);
-  }
-  .net-logo {
-    width: 54px; height: 54px;
-    border-radius: 12px;
-    object-fit: cover;
-    background: #fff;
-  }
-  .net-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-align: center;
-    line-height: 1.3;
-  }
-  .net-card.active .net-label { color: var(--cyan); }
-  .net-check {
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-  }
-  .net-card.active .net-check {
-    background: var(--cyan);
-    border-color: var(--cyan);
-  }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-  /* ── Pay button ── */
-  .btn-pay {
-    width: 100%;
-    background: linear-gradient(90deg, var(--blue) 0%, var(--cyan-dim) 100%);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-sm);
-    padding: 16px;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    box-shadow: 0 4px 24px rgba(0,100,255,0.3);
-  }
-  .btn-pay:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(0,150,255,0.4); }
-  .btn-pay:active { transform: translateY(0); }
-  .btn-pay:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-  /* ── Status panel ── */
-  .status-panel {
-    width: 100%;
-    max-width: 520px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 28px;
-    margin-bottom: 16px;
-    display: none;
-  }
-  .status-panel.visible { display: block; }
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-  .status-msg {
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.6;
-    text-align: center;
-    margin-bottom: 24px;
-    padding: 16px;
-    background: rgba(0,212,255,0.05);
-    border: 1px solid rgba(0,212,255,0.15);
-    border-radius: var(--radius-sm);
-  }
-  .status-msg svg { display: block; margin: 0 auto 10px; color: var(--cyan); }
+        .logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
 
-  /* stepper */
-  .stepper { display: flex; flex-direction: column; gap: 0; }
-  .step {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    position: relative;
-  }
-  .step:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: 15px;
-    top: 34px;
-    width: 2px;
-    height: calc(100% - 6px);
-    background: var(--border);
-    z-index: 0;
-  }
-  .step.done::after { background: var(--success); }
-  .step.active::after { background: linear-gradient(to bottom, var(--cyan), var(--border)); }
+        .logo:hover { transform: scale(1.05) rotate(2deg); }
 
-  .step-icon {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    background: var(--surface2);
-    border: 2px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 13px;
-    z-index: 1;
-    transition: all 0.3s;
-  }
-  .step.done .step-icon { background: var(--success); border-color: var(--success); color: #fff; }
-  .step.active .step-icon { background: rgba(0,212,255,0.15); border-color: var(--cyan); color: var(--cyan); }
-  .step.failed .step-icon { background: rgba(255,77,106,0.15); border-color: var(--error); color: var(--error); }
+        .brand-name {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, var(--primary-blue-bright), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-  .step-body { padding-bottom: 22px; flex: 1; }
-  .step-name {
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 32px;
-    transition: color 0.3s;
-  }
-  .step.done .step-name { color: var(--success); }
-  .step.active .step-name { color: var(--cyan); }
-  .step.failed .step-name { color: var(--error); }
-  .step.pending .step-name { color: var(--text-muted); }
-  .step-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
 
-  /* spinner */
-  .spinner {
-    width: 18px; height: 18px;
-    border: 2px solid rgba(0,212,255,0.3);
-    border-top-color: var(--cyan);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    display: inline-block;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+        .nav-link {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+            padding-bottom: 5px;
+        }
 
-  /* pulse dot */
-  .pulse-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--cyan);
-    animation: pulse 1.2s ease-in-out infinite;
-    display: inline-block;
-  }
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.5); opacity: 0.5; }
-  }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--primary-blue));
+            transition: width 0.3s ease;
+        }
 
-  /* ── Security footer ── */
-  .security-bar {
-    width: 100%;
-    max-width: 520px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 12px;
-    color: var(--text-muted);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 20px;
-    margin-bottom: 12px;
-  }
-  .security-bar svg { color: var(--success); flex-shrink: 0; }
+        .nav-link:hover {
+            color: var(--accent-cyan);
+        }
 
-  .footer-note {
-    font-size: 11px;
-    color: #3a4f6e;
-    text-align: center;
-  }
+        .nav-link:hover::after { width: 100%; }
 
-  /* ── Result overlay states ── */
-  .result-success, .result-failed {
-    text-align: center;
-    padding: 12px 0;
-    display: none;
-  }
-  .result-success.visible, .result-failed.visible { display: block; }
-  .result-icon {
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 16px;
-    font-size: 28px;
-  }
-  .result-icon.ok { background: rgba(0,232,122,0.12); color: var(--success); border: 2px solid var(--success); }
-  .result-icon.fail { background: rgba(255,77,106,0.12); color: var(--error); border: 2px solid var(--error); }
-  .result-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
-  .result-title.ok { color: var(--success); }
-  .result-title.fail { color: var(--error); }
-  .result-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
-  .btn-retry {
-    background: transparent;
-    border: 1px solid var(--border-glow);
-    color: var(--text);
-    border-radius: var(--radius-sm);
-    padding: 11px 28px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .btn-retry:hover { border-color: var(--cyan); color: var(--cyan); }
+        .nav-auth {
+            display: flex;
+            gap: 15px;
+        }
 
-  /* ── Responsive ── */
-  @media (max-width: 420px) {
-    .card, .amount-card, .status-panel { padding: 20px 16px; }
-    .amount-value { font-size: 34px; }
-    .network-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .net-logo { width: 46px; height: 46px; }
-  }
-</style>
+        .btn-login, .btn-register {
+            padding: 10px 22px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-login {
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--border-glow);
+        }
+
+        .btn-login:hover {
+            background: rgba(30, 64, 128, 0.5);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .btn-register {
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-cyan-dim));
+            color: white;
+            box-shadow: 0 4px 15px rgba(26, 111, 255, 0.4);
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 111, 255, 0.6);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--text-primary);
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        /* ── HERO SECTION ── */
+        .hero {
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-title {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 22px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-cta {
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-cyan-dim));
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 6px 30px rgba(26, 111, 255, 0.4);
+            display: inline-block;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(26, 111, 255, 0.6);
+        }
+
+        .hero-animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .floating-box {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--accent-cyan);
+            border-radius: 20px;
+            opacity: 0.1;
+            animation: floatBox 6s ease-in-out infinite;
+        }
+
+        .floating-box:nth-child(1) { top: 10%; right: 10%; }
+        .floating-box:nth-child(2) { top: 50%; left: 5%; }
+        .floating-box:nth-child(3) { bottom: 10%; right: 20%; }
+
+        @keyframes floatBox {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(5deg); }
+        }
+
+        /* ── MODAL ── */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.visible {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-content h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .close {
+            color: var(--text-muted);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover { color: var(--accent-cyan); }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-surface2);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.05);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .form-group input::placeholder { color: var(--text-muted); }
+
+        .form-switch {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .form-switch a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .form-switch a:hover {
+            text-decoration: underline;
+            color: var(--primary-blue-bright);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 13px 20px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-cyan-dim));
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(26, 111, 255, 0.4);
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 111, 255, 0.6);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ── ADMIN PANEL ── */
+        .admin-panel {
+            display: none;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999;
+            animation: slideInRight 0.5s ease;
+            flex-direction: column;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .admin-panel:not(.hidden) { display: flex; }
+        .admin-panel.hidden { display: none !important; }
+
+        .admin-header {
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-logo-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .admin-logo h1 {
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        .btn-logout {
+            padding: 10px 24px;
+            background: var(--error-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-logout:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+
+        .admin-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .admin-sidebar {
+            width: 250px;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border-color);
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .admin-menu {
+            list-style: none;
+        }
+
+        .admin-menu-item {
+            display: block;
+            padding: 14px 20px;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .admin-menu-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent-cyan);
+            border-left-color: var(--accent-cyan);
+        }
+
+        .admin-menu-item.active {
+            background: rgba(0, 212, 255, 0.15);
+            color: var(--accent-cyan);
+            border-left-color: var(--accent-cyan);
+        }
+
+        .admin-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .admin-section h2 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: var(--text-primary);
+        }
+
+        .admin-section h3 {
+            font-size: 18px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 25px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .article-form, .menu-form, .admin-form, .settings-form {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .articles-list, .users-list, .admins-list, .menu-list, .comments-list {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .list-item:hover { background: rgba(0, 212, 255, 0.05); }
+        .list-item:last-child { border-bottom: none; }
+
+        .list-item-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .list-item-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .list-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 14px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-edit {
+            background: transparent;
+            color: var(--accent-cyan);
+            border: 1px solid var(--accent-cyan);
+        }
+
+        .btn-edit:hover { background: rgba(0, 212, 255, 0.15); }
+
+        .btn-delete {
+            background: transparent;
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        .btn-delete:hover { background: rgba(255, 77, 106, 0.15); }
+
+        .pages-management {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .page-edit {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        .page-edit textarea {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-surface2);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            min-height: 150px;
+            transition: var(--transition);
+        }
+
+        .page-edit textarea:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        /* ── ARTICLES SECTION ── */
+        .articles-section {
+            padding: 80px 20px;
+        }
+
+        .section-title {
+            font-size: 42px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 60px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .article-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: var(--transition);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .article-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .article-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--bg-surface2);
+        }
+
+        .article-content {
+            padding: 20px;
+        }
+
+        .article-category {
+            display: inline-block;
+            padding: 5px 12px;
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent-cyan);
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .article-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .article-excerpt {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .article-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .article-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .article-author-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+        }
+
+        .article-link {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .article-link:hover { color: var(--primary-blue-bright); }
+
+        /* ── FOOTER ── */
+        .footer {
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-color);
+            padding: 60px 20px 30px;
+            margin-top: 100px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .footer-section p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-section a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover { color: var(--accent-cyan); }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .hamburger { display: flex; }
+            .hero-title { font-size: 40px; }
+            .hero-subtitle { font-size: 18px; }
+            .admin-container { flex-direction: column; }
+            .admin-sidebar { width: 100%; max-height: 200px; display: flex; }
+            .admin-menu { display: flex; gap: 0; }
+            .admin-menu-item { white-space: nowrap; }
+            .modal-content { padding: 30px 20px; }
+            .dashboard-stats { grid-template-columns: 1fr; }
+            .pages-management { grid-template-columns: 1fr; }
+            .articles-grid { grid-template-columns: 1fr; }
+        }
+
+        .hidden { display: none !important; }
+        .visible { display: flex !important; }
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-top-color: var(--accent-cyan);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
 </head>
 <body>
 
-<!-- Top bar -->
-<div class="topbar">
-  <div class="brand">
-    <div class="brand-icon">SX</div>
-    <div class="brand-name">Selvix Host</div>
-  </div>
-  <div class="secure-badge">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-    </svg>
-    SSL Secured
-  </div>
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <div class="navbar-container">
+        <div class="logo-section">
+            <img src="https://h.uguu.se/EafVUfTz.jpg" alt="Selvix Tech Logo" class="logo">
+            <h1 class="brand-name">Selvix Tech</h1>
+        </div>
+        <div class="nav-menu" id="navMenu">
+            <a href="#home" class="nav-link">Nyumbani</a>
+            <a href="#tech" class="nav-link">Tech</a>
+            <a href="#tutorial" class="nav-link">Tutorial</a>
+            <a href="#about" class="nav-link">Kuhusu Sisi</a>
+            <a href="#contact" class="nav-link">Wasiliana</a>
+        </div>
+        <div class="nav-auth">
+            <button class="btn-login" onclick="showModal('loginModal')">Ingia</button>
+            <button class="btn-register" onclick="showModal('registerModal')">Jisajili</button>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero" id="home">
+    <div class="hero-content">
+        <h2 class="hero-title">Karibu kwenye Selvix Tech</h2>
+        <p class="hero-subtitle">Platform ya kujifunza Teknolohia na Ujumbe wa Tech</p>
+        <button class="btn-cta" onclick="showModal('registerModal')">Jisajili Sasa</button>
+    </div>
+    <div class="hero-animation">
+        <div class="floating-box"></div>
+        <div class="floating-box" style="animation-delay: 2s;"></div>
+        <div class="floating-box" style="animation-delay: 4s;"></div>
+    </div>
+</section>
+
+<!-- Featured Articles Section -->
+<section class="articles-section" id="tech">
+    <div class="container">
+        <h2 class="section-title">Makala za Teknolohia</h2>
+        <div class="articles-grid" id="articlesGrid">
+            <!-- Articles loaded dynamically -->
+        </div>
+    </div>
+</section>
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('loginModal')">&times;</span>
+        <h2>Ingia kwenye Akaunti Yako</h2>
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="loginUsername">Jina la Mtumiaji:</label>
+                <input type="text" id="loginUsername" placeholder="Ingiza jina lako" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Neno Siri:</label>
+                <input type="password" id="loginPassword" placeholder="Ingiza neno siri" required>
+            </div>
+            <button type="submit" class="btn-primary">Ingia</button>
+            <p class="form-switch">Huna akaunti? <a href="#" onclick="switchModal('loginModal', 'registerModal')">Jisajili</a></p>
+        </form>
+    </div>
 </div>
 
-<!-- Amount card -->
-<div class="amount-card">
-  <div class="amount-label">Amount Due</div>
-  <div class="amount-value" id="displayAmount">TZS 25,000</div>
-  <div class="amount-desc">
-    <span>Hosting Plan</span>
-    Business Starter · 1 Year
-  </div>
+<!-- Registration Modal -->
+<div id="registerModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('registerModal')">&times;</span>
+        <h2>Jisajili Akaunti Mpya</h2>
+        <form onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label for="regUsername">Jina la Mtumiaji:</label>
+                <input type="text" id="regUsername" placeholder="Chagua jina lako" required>
+            </div>
+            <div class="form-group">
+                <label for="regEmail">Barua Pepe:</label>
+                <input type="email" id="regEmail" placeholder="Ingiza barua pepe" required>
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Neno Siri:</label>
+                <input type="password" id="regPassword" placeholder="Tengeneza neno siri" required>
+            </div>
+            <div class="form-group">
+                <label for="regConfirmPassword">Kubali Neno Siri:</label>
+                <input type="password" id="regConfirmPassword" placeholder="Kubali neno siri" required>
+            </div>
+            <button type="submit" class="btn-primary">Jisajili</button>
+            <p class="form-switch">Una akaunti? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Ingia</a></p>
+        </form>
+    </div>
 </div>
 
-<!-- Payment form card -->
-<div class="card" id="formCard">
-  <div class="card-title">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <rect x="2" y="5" width="20" height="14" rx="2"/>
-      <line x1="2" y1="10" x2="22" y2="10"/>
-    </svg>
-    Complete Your Payment
-  </div>
-
-  <!-- Full Name -->
-  <div class="field">
-    <label for="fullName">Full Name</label>
-    <input type="text" id="fullName" placeholder="e.g. John Mwangi" autocomplete="name" />
-  </div>
-
-  <!-- Phone -->
-  <div class="field">
-    <label for="phone">Phone Number</label>
-    <input type="tel" id="phone" placeholder="e.g. 0712 345 678" autocomplete="tel" maxlength="13" />
-  </div>
-
-  <!-- Network provider dropdown -->
-  <div class="field">
-    <label for="networkSelect">Network Provider</label>
-    <div class="select-wrap">
-      <select id="networkSelect" onchange="syncNetworkCards(this.value)">
-        <option value="">— Select Network —</option>
-        <option value="mpesa">M-Pesa (Vodacom)</option>
-        <option value="mixx">Mixx by Yas</option>
-        <option value="airtel">Airtel Money</option>
-        <option value="halopesa">HaloPesa</option>
-      </select>
+<!-- Admin Login Modal -->
+<div id="adminLoginModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('adminLoginModal')">&times;</span>
+        <h2>Ingia Paneli ya Msimamizi</h2>
+        <form onsubmit="handleAdminLogin(event)">
+            <div class="form-group">
+                <label for="adminUsername">Jina la Msimamizi:</label>
+                <input type="text" id="adminUsername" placeholder="Ingiza jina la admin" required>
+            </div>
+            <div class="form-group">
+                <label for="adminPassword">Neno Siri:</label>
+                <input type="password" id="adminPassword" placeholder="Ingiza neno siri" required>
+            </div>
+            <button type="submit" class="btn-primary">Ingia Paneli</button>
+        </form>
     </div>
-  </div>
-
-  <!-- Network logo cards -->
-  <div class="networks-title">Or select network</div>
-  <div class="network-grid">
-    <div class="net-card" id="card-mpesa" onclick="selectNetwork('mpesa')">
-      <img class="net-logo" src="https://img.logo.dev/vodacom.co.tz?token=pk_TtfjeN34SW6X8PheQFpZ0A&retina=true" alt="Vodacom M-Pesa" loading="lazy" />
-      <div class="net-label">M-Pesa<br>Vodacom</div>
-      <div class="net-check" id="chk-mpesa">
-        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.5">
-          <polyline points="2,6 5,9 10,3"/>
-        </svg>
-      </div>
-    </div>
-    <div class="net-card" id="card-mixx" onclick="selectNetwork('mixx')">
-      <img class="net-logo" src="https://img.logo.dev/yas.co.tz?token=pk_TtfjeN34SW6X8PheQFpZ0A&retina=true" alt="Mixx by Yas" loading="lazy" />
-      <div class="net-label">Mixx by Yas</div>
-      <div class="net-check" id="chk-mixx">
-        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.5">
-          <polyline points="2,6 5,9 10,3"/>
-        </svg>
-      </div>
-    </div>
-    <div class="net-card" id="card-airtel" onclick="selectNetwork('airtel')">
-      <img class="net-logo" src="https://img.logo.dev/airtel.co.tz?token=pk_TtfjeN34SW6X8PheQFpZ0A&retina=true" alt="Airtel Money" loading="lazy" />
-      <div class="net-label">Airtel Money</div>
-      <div class="net-check" id="chk-airtel">
-        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.5">
-          <polyline points="2,6 5,9 10,3"/>
-        </svg>
-      </div>
-    </div>
-    <div class="net-card" id="card-halopesa" onclick="selectNetwork('halopesa')">
-      <img class="net-logo" src="https://img.logo.dev/halotel.co.tz?token=pk_TtfjeN34SW6X8PheQFpZ0A&retina=true" alt="HaloPesa" loading="lazy" />
-      <div class="net-label">HaloPesa<br>Halotel</div>
-      <div class="net-check" id="chk-halopesa">
-        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.5">
-          <polyline points="2,6 5,9 10,3"/>
-        </svg>
-      </div>
-    </div>
-  </div>
-
-  <!-- Error msg -->
-  <div id="formError" style="display:none; color:#ff4d6a; font-size:13px; margin-bottom:14px; padding:10px 14px; background:rgba(255,77,106,0.08); border:1px solid rgba(255,77,106,0.2); border-radius:8px;"></div>
-
-  <!-- Pay button -->
-  <button class="btn-pay" id="btnPay" onclick="initiatePay()">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-    </svg>
-    Pay Now
-  </button>
 </div>
 
-<!-- Status panel -->
-<div class="status-panel" id="statusPanel">
+<!-- Admin Panel -->
+<div id="adminPanel" class="admin-panel hidden">
+    <div class="admin-header">
+        <div class="admin-logo">
+            <img src="https://h.uguu.se/EafVUfTz.jpg" alt="Selvix" class="admin-logo-img">
+            <h1>Paneli ya Msimamizi - Selvix Tech</h1>
+        </div>
+        <button class="btn-logout" onclick="logout()">Toka</button>
+    </div>
 
-  <!-- Info message -->
-  <div class="status-msg" id="statusMsg">
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-    </svg>
-    Payment request has been sent to your phone. Please complete payment on your mobile device.
-  </div>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <ul class="admin-menu">
+                <li><a href="#" onclick="showAdminSection('dashboard')" class="admin-menu-item active">Dashibodi</a></li>
+                <li><a href="#" onclick="showAdminSection('articles')" class="admin-menu-item">Makala</a></li>
+                <li><a href="#" onclick="showAdminSection('users')" class="admin-menu-item">Watumiaji</a></li>
+                <li><a href="#" onclick="showAdminSection('admins')" class="admin-menu-item">Wasimiamizi</a></li>
+                <li><a href="#" onclick="showAdminSection('menu')" class="admin-menu-item">Menyu</a></li>
+                <li><a href="#" onclick="showAdminSection('pages')" class="admin-menu-item">Kurasa</a></li>
+            </ul>
+        </aside>
 
-  <!-- Stepper -->
-  <div class="stepper" id="stepper">
-    <div class="step" id="step-waiting">
-      <div class="step-icon" id="icon-waiting">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/>
-        </svg>
-      </div>
-      <div class="step-body">
-        <div class="step-name">Waiting for Payment</div>
-        <div class="step-sub" id="sub-waiting">Awaiting your confirmation on the device</div>
-      </div>
-    </div>
-    <div class="step" id="step-processing">
-      <div class="step-icon" id="icon-processing">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="23,4 23,10 17,10"/>
-          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-        </svg>
-      </div>
-      <div class="step-body">
-        <div class="step-name">Processing</div>
-        <div class="step-sub" id="sub-processing">Verifying transaction with network</div>
-      </div>
-    </div>
-    <div class="step" id="step-success">
-      <div class="step-icon" id="icon-success">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="20,6 9,17 4,12"/>
-        </svg>
-      </div>
-      <div class="step-body">
-        <div class="step-name">Payment Successful</div>
-        <div class="step-sub" id="sub-success">Funds received and confirmed</div>
-      </div>
-    </div>
-    <div class="step" id="step-failed" style="display:none;">
-      <div class="step-icon" id="icon-failed">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </div>
-      <div class="step-body">
-        <div class="step-name">Payment Failed</div>
-        <div class="step-sub" id="sub-failed">Transaction could not be completed</div>
-      </div>
-    </div>
-  </div>
+        <!-- Main Content -->
+        <main class="admin-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="admin-section active">
+                <h2>Dashibodi</h2>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <h3>Jumla ya Watumiaji</h3>
+                        <p class="stat-number" id="totalUsers">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Makala</h3>
+                        <p class="stat-number" id="totalArticles">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Menyu</h3>
+                        <p class="stat-number" id="totalMenus">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Wasimiamizi</h3>
+                        <p class="stat-number" id="totalAdmins">0</p>
+                    </div>
+                </div>
+            </section>
 
-  <!-- Result: success -->
-  <div class="result-success" id="resultSuccess">
-    <div class="result-icon ok">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <polyline points="20,6 9,17 4,12"/>
-      </svg>
-    </div>
-    <div class="result-title ok">Payment Confirmed!</div>
-    <div class="result-sub">Your hosting service has been activated. A receipt has been sent to your phone.</div>
-  </div>
+            <!-- Articles Management -->
+            <section id="articles" class="admin-section">
+                <h2>Kuongeza Makala</h2>
+                <form onsubmit="handleAddArticle(event)" class="article-form">
+                    <div class="form-group">
+                        <label>Kichwa cha Makala:</label>
+                        <input type="text" id="articleTitle" placeholder="Ingiza kichwa" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Kategoria:</label>
+                        <select id="articleCategory" required>
+                            <option value="">Chagua kategoria</option>
+                            <option value="tech">Tech</option>
+                            <option value="tutorial">Tutorial</option>
+                            <option value="news">Habari</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Maelezo:</label>
+                        <textarea id="articleContent" placeholder="Andika makala" rows="6" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>URL ya Picha:</label>
+                        <input type="url" id="articleImage" placeholder="Ingiza URL ya picha">
+                    </div>
+                    <button type="submit" class="btn-primary">Weka Makala</button>
+                </form>
 
-  <!-- Result: failed -->
-  <div class="result-failed" id="resultFailed">
-    <div class="result-icon fail">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
-      </svg>
-    </div>
-    <div class="result-title fail">Payment Failed</div>
-    <div class="result-sub" id="failedReason">The transaction was cancelled or timed out. Please try again.</div>
-    <button class="btn-retry" onclick="resetPayment()">Try Again</button>
-  </div>
+                <h3>Makala Zilizopo</h3>
+                <div class="articles-list" id="articlesListAdmin"></div>
+            </section>
 
+            <!-- Users Management -->
+            <section id="users" class="admin-section">
+                <h2>Watumiaji</h2>
+                <div class="users-list" id="usersList"></div>
+            </section>
+
+            <!-- Admins Management -->
+            <section id="admins" class="admin-section">
+                <h2>Kuongeza Wasimiamizi</h2>
+                <form onsubmit="handleAddAdmin(event)" class="admin-form">
+                    <div class="form-group">
+                        <label>Jina la Admin:</label>
+                        <input type="text" id="adminName" placeholder="Ingiza jina" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Barua Pepe:</label>
+                        <input type="email" id="adminEmail" placeholder="Ingiza barua pepe" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Jina la Mtumiaji:</label>
+                        <input type="text" id="adminUsernameAdd" placeholder="Ingiza jina la mtumiaji" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Neno Siri:</label>
+                        <input type="password" id="adminPasswordAdd" placeholder="Tengeneza neno siri" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Ongeza Admin</button>
+                </form>
+
+                <h3>Wasimiamizi Waliotiba</h3>
+                <div class="admins-list" id="adminsList"></div>
+            </section>
+
+            <!-- Menu Management -->
+            <section id="menu" class="admin-section">
+                <h2>Kuongeza Menyu (100+)</h2>
+                <form onsubmit="handleAddMenu(event)" class="menu-form">
+                    <div class="form-group">
+                        <label>Jina la Menu:</label>
+                        <input type="text" id="menuName" placeholder="Ingiza jina la menu" required>
+                    </div>
+                    <div class="form-group">
+                        <label>URL ya Menu:</label>
+                        <input type="text" id="menuUrl" placeholder="Ingiza URL" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Ongeza Menu</button>
+                </form>
+
+                <h3>Menyu Zilizopo</h3>
+                <div class="menu-list" id="menuList"></div>
+            </section>
+
+            <!-- Pages Management -->
+            <section id="pages" class="admin-section">
+                <h2>Kuhariri Kurasa</h2>
+                <div class="pages-management">
+                    <div class="page-edit">
+                        <h3>Kuhusu Sisi</h3>
+                        <textarea id="aboutUsContent" placeholder="Andika kuhusu sisi" rows="6"></textarea>
+                        <button onclick="savePage('about')" class="btn-primary">Hifadhi</button>
+                    </div>
+                    <div class="page-edit">
+                        <h3>Sera ya Faragha</h3>
+                        <textarea id="privacyContent" placeholder="Andika sera" rows="6"></textarea>
+                        <button onclick="savePage('privacy')" class="btn-primary">Hifadhi</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
 </div>
 
-<!-- Security bar -->
-<div class="security-bar">
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-    <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-  </svg>
-  Your payment is secured and encrypted.
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-  </svg>
-  256-bit SSL
-</div>
-
-<div class="footer-note">© 2025 Selvix Host · All transactions are monitored for security</div>
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4>Selvix Tech</h4>
+            <p>Platform ya kujifunza Teknolohia</p>
+        </div>
+        <div class="footer-section">
+            <h4>Haraka</h4>
+            <ul>
+                <li><a href="#about">Kuhusu Sisi</a></li>
+                <li><a href="#contact">Wasiliana</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Wasiliana</h4>
+            <p>Email: info@selvixtech.com</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 Selvix Tech. Haki zote zimehifadhiwa.</p>
+    </div>
+</footer>
 
 <script>
-// ── State ──────────────────────────────────────────────
-let selectedNetwork = '';
+// ══════════════════════════════════════════════════════════════
+// DATA STORAGE
+// ══════════════════════════════════════════════════════════════
 
-// ── // ── Validation ─────────────────────────────────────────
-function showError(msg) {
-  const el = document.getElementById('formError');
-  el.textContent = msg;
-  el.style.display = 'block';
+const SelvixData = {
+    load: function(key, defaultValue = null) {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : defaultValue;
+    },
+    save: function(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+    },
+    getUsers: function() { return this.load('selvix_users', []); },
+    getArticles: function() { return this.load('selvix_articles', []); },
+    getAdmins: function() {
+        return this.load('selvix_admins', [
+            { id: 1, username: 'admin', password: '54545454', email: 'admin@selvix.com', name: 'Admin Selvix' }
+        ]);
+    },
+    getMenuItems: function() {
+        return this.load('selvix_menu', [
+            { id: 1, name: 'Nyumbani', url: '#home' },
+            { id: 2, name: 'Tech', url: '#tech' },
+            { id: 3, name: 'Tutorial', url: '#tutorial' }
+        ]);
+    },
+    getCurrentUser: function() { return this.load('selvix_current_user', null); },
+    setCurrentUser: function(user) { this.save('selvix_current_user', user); },
+    getCurrentAdmin: function() { return this.load('selvix_current_admin', null); },
+    setCurrentAdmin: function(admin) { this.save('selvix_current_admin', admin); },
+    addUser: function(user) {
+        const users = this.getUsers();
+        user.id = users.length + 1;
+        users.push(user);
+        this.save('selvix_users', users);
+        return user;
+    },
+    addArticle: function(article) {
+        const articles = this.getArticles();
+        article.id = articles.length + 1;
+        articles.push(article);
+        this.save('selvix_articles', articles);
+        return article;
+    },
+    deleteArticle: function(articleId) {
+        let articles = this.getArticles();
+        articles = articles.filter((a) => a.id !== articleId);
+        this.save('selvix_articles', articles);
+    },
+    addMenuItem: function(menuItem) {
+        const menu = this.getMenuItems();
+        menuItem.id = menu.length + 1;
+        menu.push(menuItem);
+        this.save('selvix_menu', menu);
+        return menuItem;
+    },
+    deleteMenuItem: function(menuId) {
+        let menu = this.getMenuItems();
+        menu = menu.filter((m) => m.id !== menuId);
+        this.save('selvix_menu', menu);
+    },
+    addAdmin: function(admin) {
+        const admins = this.getAdmins();
+        admin.id = admins.length + 1;
+        admins.push(admin);
+        this.save('selvix_admins', admins);
+        return admin;
+    },
+    deleteAdmin: function(adminId) {
+        let admins = this.getAdmins();
+        admins = admins.filter((a) => a.id !== adminId);
+        this.save('selvix_admins', admins);
+    },
+};
+
+// ══════════════════════════════════════════════════════════════
+// MODAL FUNCTIONS
+// ══════════════════════════════════════════════════════════════
+
+function showModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.add('visible');
 }
 
-function validate() {
-  const name  = document.getElementById('fullName').value.trim();
-  const phone = document.getElementById('phone').value.trim();
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.remove('visible');
+}
 
-  if (!name)            { showError('Please enter your full name.'); return false; }
-  if (!phone)           { showError('Please enter your phone number.'); return false; }
-  if (!/^[\d\s+\-()]{9,13}$/.test(phone)) {
-    showError('Enter a valid phone number (e.g. 0712 345 678).');
+function switchModal(fromModal, toModal) {
+    closeModal(fromModal);
+    showModal(toModal);
     return false;
-  }
-  if (!selectedNetwork) { showError('Please select a network provider.'); return false; }
-  document.getElementById('formError').style.display = 'none';
-  return true;
 }
 
-// ── Step helpers ───────────────────────────────────────
-function setStep(stepId, state) {
-  const el = document.getElementById('step-' + stepId);
-  el.className = 'step ' + state;
+window.addEventListener('click', (event) => {
+    if (event.target.classList.contains('modal')) {
+        event.target.classList.remove('visible');
+    }
+});
+
+// ══════════════════════════════════════════════════════════════
+// AUTHENTICATION
+// ══════════════════════════════════════════════════════════════
+
+function handleRegister(event) {
+    event.preventDefault();
+    const username = document.getElementById('regUsername').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const confirmPassword = document.getElementById('regConfirmPassword').value;
+
+    if (password !== confirmPassword) {
+        alert('Neno siri haliwiani!');
+        return;
+    }
+
+    const users = SelvixData.getUsers();
+    if (users.some((u) => u.username === username || u.email === email)) {
+        alert('Jina au barua pepe tayari iko!');
+        return;
+    }
+
+    SelvixData.addUser({ username, email, password });
+    alert('Jisajili kwa mafanikio!');
+    closeModal('registerModal');
+    document.getElementById('regUsername').value = '';
+    document.getElementById('regEmail').value = '';
+    document.getElementById('regPassword').value = '';
+    document.getElementById('regConfirmPassword').value = '';
 }
 
-function setStepIcon(stepId, html) {
-  document.getElementById('icon-' + stepId).innerHTML = html;
+function handleLogin(event) {
+    event.preventDefault();
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    const users = SelvixData.getUsers();
+    const user = users.find((u) => u.username === username && u.password === password);
+
+    if (!user) {
+        alert('Jina au neno siri si sahihi!');
+        return;
+    }
+
+    SelvixData.setCurrentUser(user);
+    alert('Karibu ' + user.username + '!');
+    closeModal('loginModal');
 }
 
-// ── Payment flow ───────────────────────────────────────
-async function initiatePay() {
-  if (!validate()) return;
+function handleAdminLogin(event) {
+    event.preventDefault();
+    const username = document.getElementById('adminUsername').value.trim();
+    const password = document.getElementById('adminPassword').value;
 
-  const btn = document.getElementById('btnPay');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Sending request…';
+    const admins = SelvixData.getAdmins();
+    const admin = admins.find((a) => a.username === username && a.password === password);
 
-  // Collect payload (ready for Django backend)
-  const payload = {
-    full_name:  document.getElementById('fullName').value.trim(),
-    phone:      document.getElementById('phone').value.trim(),
-    network:    selectedNetwork,
-    amount:     window._payData.amount,
-    plan:       window._payData.plan,
-    period:     window._payData.period,
-    order_ref:  window._payData.orderRef,
-  };
+    if (!admin) {
+        alert('Admin jina au neno siri si sahihi!');
+        return;
+    }
 
-  try {
-    const resp = await fetch(
-      https://backgrounds-tuition-sensitive-basic.trycloudflare.com/api/payments/initiate/',
-      {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': getCookie('csrftoken'),
-      },
-      body: JSON.stringify(payload),
+    SelvixData.setCurrentAdmin(admin);
+    closeModal('adminLoginModal');
+    showAdminPanel();
+}
+
+function logout() {
+    SelvixData.setCurrentAdmin(null);
+    document.getElementById('adminPanel').classList.add('hidden');
+    alert('Umetoka!');
+}
+
+// ══════════════════════════════════════════════════════════════
+// ADMIN PANEL
+// ══════════════════════════════════════════════════════════════
+
+function showAdminPanel() {
+    document.getElementById('adminPanel').classList.remove('hidden');
+    loadAdminDashboard();
+}
+
+function loadAdminDashboard() {
+    document.getElementById('totalUsers').textContent = SelvixData.getUsers().length;
+    document.getElementById('totalArticles').textContent = SelvixData.getArticles().length;
+    document.getElementById('totalAdmins').textContent = SelvixData.getAdmins().length;
+    document.getElementById('totalMenus').textContent = SelvixData.getMenuItems().length;
+    loadArticlesInAdmin();
+    loadUsersInAdmin();
+    loadAdminsInAdmin();
+    loadMenuInAdmin();
+}
+
+function showAdminSection(sectionId) {
+    document.querySelectorAll('.admin-section').forEach((section) => {
+        section.classList.remove('active');
     });
-    const data = await resp.json();
-    if (!resp.ok || data.error) {
-      simulateFail(data.message || 'Server error. Please try again.');
-      return;
+    document.querySelectorAll('.admin-menu-item').forEach((item) => {
+        item.classList.remove('active');
+    });
+
+    const section = document.getElementById(sectionId);
+    if (section) section.classList.add('active');
+    event.target.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════════
+// ARTICLE FUNCTIONS
+// ══════════════════════════════════════════════════════════════
+
+function handleAddArticle(event) {
+    event.preventDefault();
+
+    const title = document.getElementById('articleTitle').value.trim();
+    const category = document.getElementById('articleCategory').value;
+    const content = document.getElementById('articleContent').value.trim();
+    const image = document.getElementById('articleImage').value.trim() || 'https://via.placeholder.com/400x300?text=Selvix';
+
+    const article = { title, category, content, image, author: 'Admin', views: 0 };
+    SelvixData.addArticle(article);
+    alert('Makala yaongezwa!');
+
+    document.getElementById('articleTitle').value = '';
+    document.getElementById('articleCategory').value = '';
+    document.getElementById('articleContent').value = '';
+    document.getElementById('articleImage').value = '';
+
+    loadArticlesInAdmin();
+    loadFeaturedArticles();
+}
+
+function deleteArticle(articleId) {
+    if (confirm('Je, unasahau kufuta?')) {
+        SelvixData.deleteArticle(articleId);
+        loadArticlesInAdmin();
+        loadFeaturedArticles();
     }
-    window._txnId = data.transaction_id;  // save for polling
-    showStatusPanel();
-    pollStatus(data.transaction_id);
-  } catch (e) {
-    simulateFail('Network error. Check your connection.');
-    return;
-  }
-  */
-
-
-function showStatusPanel() {
-  document.getElementById('formCard').style.display = 'none';
-  const panel = document.getElementById('statusPanel');
-  panel.classList.add('visible');
-
-  // Reset steps
-  ['waiting','processing','success'].forEach(s => setStep(s, 'pending'));
-  document.getElementById('step-failed').style.display = 'none';
-  document.getElementById('resultSuccess').classList.remove('visible');
-  document.getElementById('resultFailed').classList.remove('visible');
 }
 
-  setStep('processing', 'failed');
-  document.getElementById('step-failed').style.display = 'flex';
-  setStep('failed', 'failed');
-  document.getElementById('sub-failed').textContent = reason || 'Transaction could not be completed.';
-  document.getElementById('failedReason').textContent = reason || 'The transaction was cancelled or timed out. Please try again.';
+function loadFeaturedArticles() {
+    const articles = SelvixData.getArticles();
+    const grid = document.getElementById('articlesGrid');
+    if (!grid) return;
 
-  document.getElementById('statusMsg').style.display = 'none';
-  document.getElementById('resultFailed').classList.add('visible');
-}
-
-// ── Status polling for Django backend ─────────────────
-// Call this after initiate returns a transaction_id
-async function pollStatus(txnId) {
-  let attempts = 0;
-  const maxAttempts = 20; // ~60 seconds
-
-  setStep('waiting', 'active');
-  setStepIcon('waiting', '<span class="pulse-dot"></span>');
-
-  const interval = setInterval(async () => {
-    attempts++;
-    try {
-      const resp = await fetch('/api/payments/status/?txn_id=' + txnId, {
-        headers: { 'X-CSRFToken': getCookie('csrftoken') }
-      });
-      const data = await resp.json();
-
-      if (data.status === 'processing') {
-        setStep('waiting', 'done');
-        setStepIcon('waiting',
-          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>');
-        setStep('processing', 'active');
-        setStepIcon('processing', '<span class="spinner"></span>');
-      } else if (data.status === 'success') {
-        clearInterval(interval);
-        simulateSuccess();
-      } else if (data.status === 'failed') {
-        clearInterval(interval);
-        simulateFail(data.message);
-      } else if (attempts >= maxAttempts) {
-        clearInterval(interval);
-        simulateFail('Payment timed out. Please try again.');
-      }
-    } catch (e) {
-      if (attempts >= maxAttempts) {
-        clearInterval(interval);
-        simulateFail('Connection lost. Please check your internet.');
-      }
+    grid.innerHTML = '';
+    if (articles.length === 0) {
+        grid.innerHTML = '<p style="text-align:center; color:#6b82a8;">Hakuna makala bado.</p>';
+        return;
     }
-  }, 3000);
+
+    articles.forEach((article) => {
+        const card = document.createElement('div');
+        card.className = 'article-card';
+        card.innerHTML = `
+            <img src="${article.image}" alt="${article.title}" class="article-image" />
+            <div class="article-content">
+                <div class="article-category">${article.category}</div>
+                <h3 class="article-title">${article.title}</h3>
+                <p class="article-excerpt">${article.content.substring(0, 100)}...</p>
+                <div class="article-footer">
+                    <div class="article-author">
+                        <div class="article-author-avatar"></div>
+                        <span>${article.author}</span>
+                    </div>
+                    <a href="#" class="article-link">Soma</a>
+                </div>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
 }
 
-// ── Reset ──────────────────────────────────────────────
-function resetPayment() {
-  document.getElementById('formCard').style.display = 'block';
-  document.getElementById('statusPanel').classList.remove('visible');
-  document.getElementById('statusMsg').style.display = 'block';
+function loadArticlesInAdmin() {
+    const articles = SelvixData.getArticles();
+    const list = document.getElementById('articlesListAdmin');
+    if (!list) return;
 
-  const btn = document.getElementById('btnPay');
-  btn.disabled = false;
-  btn.innerHTML = `
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-    </svg>
-    Pay Now`;
+    list.innerHTML = '';
+    if (articles.length === 0) {
+        list.innerHTML = '<p style="color:#6b82a8;">Hakuna makala.</p>';
+        return;
+    }
+
+    articles.forEach((article) => {
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.innerHTML = `
+            <div>
+                <div class="list-item-title">${article.title}</div>
+                <div class="list-item-meta">Kategoria: ${article.category}</div>
+            </div>
+            <div class="list-actions">
+                <button class="btn-small btn-delete" onclick="deleteArticle(${article.id})">Futa</button>
+            </div>
+        `;
+        list.appendChild(item);
+    });
 }
 
-// ── Helpers ────────────────────────────────────────────
-function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+// ══════════════════════════════════════════════════════════════
+// MENU FUNCTIONS
+// ══════════════════════════════════════════════════════════════
 
-function getCookie(name) {
-  const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-  return match ? decodeURIComponent(match[1]) : '';
+function handleAddMenu(event) {
+    event.preventDefault();
+    const name = document.getElementById('menuName').value.trim();
+    const url = document.getElementById('menuUrl').value.trim();
+
+    SelvixData.addMenuItem({ name, url });
+    alert('Menu yaongezwa!');
+
+    document.getElementById('menuName').value = '';
+    document.getElementById('menuUrl').value = '';
+    loadMenuInAdmin();
 }
+
+function deleteMenu(menuId) {
+    if (confirm('Je, unasahau kufuta?')) {
+        SelvixData.deleteMenuItem(menuId);
+        loadMenuInAdmin();
+    }
+}
+
+function loadMenuInAdmin() {
+    const menu = SelvixData.getMenuItems();
+    const list = document.getElementById('menuList');
+    if (!list) return;
+
+    list.innerHTML = '';
+    menu.forEach((item) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'list-item';
+        itemEl.innerHTML = `
+            <div>
+                <div class="list-item-title">${item.name}</div>
+                <div class="list-item-meta">URL: ${item.url}</div>
+            </div>
+            <div class="list-actions">
+                <button class="btn-small btn-delete" onclick="deleteMenu(${item.id})">Futa</button>
+            </div>
+        `;
+        list.appendChild(itemEl);
+    });
+}
+
+// ══════════════════════════════════════════════════════════════
+// USERS & ADMINS
+// ══════════════════════════════════════════════════════════════
+
+function loadUsersInAdmin() {
+    const users = SelvixData.getUsers();
+    const list = document.getElementById('usersList');
+    if (!list) return;
+
+    list.innerHTML = '';
+    if (users.length === 0) {
+        list.innerHTML = '<p style="color:#6b82a8;">Hakuna watumiaji.</p>';
+        return;
+    }
+
+    users.forEach((user) => {
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.innerHTML = `
+            <div>
+                <div class="list-item-title">${user.username}</div>
+                <div class="list-item-meta">Email: ${user.email}</div>
+            </div>
+        `;
+        list.appendChild(item);
+    });
+}
+
+function handleAddAdmin(event) {
+    event.preventDefault();
+    const name = document.getElementById('adminName').value.trim();
+    const email = document.getElementById('adminEmail').value.trim();
+    const username = document.getElementById('adminUsernameAdd').value.trim();
+    const password = document.getElementById('adminPasswordAdd').value;
+
+    SelvixData.addAdmin({ name, email, username, password });
+    alert('Admin yaongezwa!');
+
+    document.getElementById('adminName').value = '';
+    document.getElementById('adminEmail').value = '';
+    document.getElementById('adminUsernameAdd').value = '';
+    document.getElementById('adminPasswordAdd').value = '';
+
+    loadAdminsInAdmin();
+}
+
+function loadAdminsInAdmin() {
+    const admins = SelvixData.getAdmins();
+    const list = document.getElementById('adminsList');
+    if (!list) return;
+
+    list.innerHTML = '';
+    admins.forEach((admin) => {
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.innerHTML = `
+            <div>
+                <div class="list-item-title">${admin.name}</div>
+                <div class="list-item-meta">Username: ${admin.username}</div>
+            </div>
+            ${admin.id !== 1 ? '<button class="btn-small btn-delete" onclick="">Futa</button>' : ''}
+        `;
+        list.appendChild(item);
+    });
+}
+
+function savePage(pageType) {
+    alert('Ukurasa umehifadhiwa!');
+}
+
+// ══════════════════════════════════════════════════════════════
+// INITIALIZATION
+// ══════════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadFeaturedArticles();
+    const currentAdmin = SelvixData.getCurrentAdmin();
+    if (currentAdmin) {
+        showAdminPanel();
+    }
+});
+
+// Admin login hint
+console.log('💡 Admin ya test: username=admin, password=54545454');
 </script>
+
 </body>
 </html>
